@@ -1,5 +1,5 @@
 """
-Main panel for M2B (MIDI to Blender) addon implementation.
+Main panel for M2V (MIDI to Blender) addon implementation.
 This class creates and manages the main panel interface for the MIDI to Blender (M2B) addon
 in Blender's 3D View sidebar. It provides a user interface for selecting MIDI and audio files,
 configuring animation settings, and generating animations based on MIDI data.
@@ -85,7 +85,7 @@ def update_midi_file(self, context):
         m2b.audio_file = ""
 
 class M2B_Properties(bpy.types.PropertyGroup):
-    """Properties for M2B add-on"""
+    """Properties for M2V add-on"""
 
     midi_file: bpy.props.StringProperty(
         name="MIDI File",
@@ -148,18 +148,18 @@ class M2B_OT_OpenMidiFile(bpy.types.Operator, ImportHelper):
 
 class M2B_PT_MainPanel(bpy.types.Panel):
     """
-    Main panel for M2B (MIDI to Blender) addon.
+    Main panel for M2V (MIDI to Blender) addon.
     This panel provides the main interface for the MIDI to Blender animation generator.
     Located in the 3D View's sidebar under the 'M2B' category.
     """
-    bl_label = "M2B - MIDI to Blender"
+    bl_label = "M2V - MIDI to Visuals"
     bl_idname = "M2B_PT_MainPanel"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
     bl_category = 'M2B'
 
     def draw(self, context):
-        """Draw the main M2B panel layout in Blender."""
+        """Draw the main M2V panel layout in Blender."""
         layout = self.layout
         m2b = context.scene.m2b
 
