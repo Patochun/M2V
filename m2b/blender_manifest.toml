@@ -1,0 +1,14 @@
+schema_version = "1.0.0"
+
+id = "M2B"
+version = "1.0.0"
+name = "MIDI to Blender"
+tagline = "With MIDI file as input create somes 3D animations in blender"
+maintainer = "Patochun - Patrick M. <ptkmgr@gmail.com>"
+type = "add-on"
+website = "https://github.com/Patochun"
+tags = ["3D View", "Animation", "Scene"]
+blender_version_min = "4.2.0"
+license = [
+  "SPDX:GPL-3.0-or-later",
+]
