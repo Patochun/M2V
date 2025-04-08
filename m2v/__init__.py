@@ -2,15 +2,15 @@
 M2B (MIDI to Blender) is a Blender addon that generates 3D animations from MIDI files.
 """
 import bpy # type: ignore  # pylint: disable=import-error
-from .operators.ops import M2B_OT_GenerateAnimation
-from .ui.panels import M2B_Properties, M2B_PT_MainPanel, M2B_OT_OpenMidiFile
+from .operators.ops import OT_GenerateAnimation
+from .ui.panels import M2B_Properties, PT_MainPanel, OT_OpenMidiFile
 
 # Register classes
 classes = (
     M2B_Properties,
-    M2B_OT_OpenMidiFile,
-    M2B_OT_GenerateAnimation,
-    M2B_PT_MainPanel,
+    OT_OpenMidiFile,
+    OT_GenerateAnimation,
+    PT_MainPanel,
 )
 
 def register():
