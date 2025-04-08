@@ -4,7 +4,7 @@ A blender extension that generates animated 3D visualizations from MIDI files in
 
 ## Overview
 
-M2V converts MIDI music data into various 3D animated visualizations in Blender. It can create several visualization types including bar graphs, note strips, waterfalls, fireworks, and fountains.
+MIDI to Visuals converts MIDI files into synchronized 3D animations, mapping musical notes and instruments into dynamic visual sequences.
 
 ## Features
 
@@ -33,13 +33,6 @@ M2V converts MIDI music data into various 3D animated visualizations in Blender.
   - Geometry nodes
   - Audio sync with MP3
   - Compositing effects
-
-## Requirements
-
-- Blender 4.0 or higher
-- Python 3.x
-- MIDI files (.mid)
-- Optional: Corresponding MP3 audio files
 
 ## License
 
