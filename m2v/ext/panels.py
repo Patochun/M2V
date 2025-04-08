@@ -66,7 +66,7 @@ def update_midi_file(self, context):
     else:
         m2b.audio_file = ""
 
-class M2B_Properties(bpy.types.PropertyGroup):
+class M2V_Properties(bpy.types.PropertyGroup):
     """Properties for M2V add-on"""
 
     midi_file: bpy.props.StringProperty(
@@ -113,8 +113,8 @@ class M2B_Properties(bpy.types.PropertyGroup):
     )
 
 class OT_OpenMidiFile(bpy.types.Operator, ImportHelper):
-    """Open MIDI File"""
-    bl_idname = "m2b.open_midi_file"
+    """Operator Type = Open MIDI File"""
+    bl_idname = "wm.open_midi_file"
     bl_label = "Open MIDI File"
     bl_options = {'REGISTER', 'UNDO'}
 
@@ -130,7 +130,7 @@ class OT_OpenMidiFile(bpy.types.Operator, ImportHelper):
 
 class PT_MainPanel(bpy.types.Panel):
     """
-    Main panel for M2V (MIDI to Blender) addon.
+    Panel Type = Main panel for M2V (MIDI to Blender) addon.
     This panel provides the main interface for the MIDI to Blender animation generator.
     Located in the 3D View's sidebar under the 'M2B' category.
     """
@@ -147,7 +147,7 @@ class PT_MainPanel(bpy.types.Panel):
 
         box = layout.box()
         box.label(text="MIDI File:")
-        box.operator("m2b.open_midi_file")
+        box.operator("wm.open_midi_file")
         box.prop(m2b, "audio_file")
 
         box = layout.box()
