@@ -5,16 +5,6 @@ import bpy # type: ignore  # pylint: disable=import-error
 from .operators.ops import OT_GenerateAnimation
 from .ui.panels import Properties, PT_MainPanel, OT_OpenMidiFile
 
-# bl_info = {
-#     "name": "M2V - MIDI To Visuals",
-#     "author": "Patochun (Patrick M)",
-#     "version": (10, 0),
-#     "blender": (4, 0, 0),
-#     "location": "View3D > Sidebar > M2V",
-#     "description": "Generate 3D animations from MIDI files",
-#     "category": "Animation"
-# }
-
 # Register classes
 classes = (
     Properties,

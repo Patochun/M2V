@@ -1,7 +1,7 @@
 schema_version = "1.0.0"
 
 id = "M2V"
-version = "1.0.0"
+version = "1.1.0"
 name = "MIDI To Visuals"
 tagline = "With MIDI file as input create somes 3D animations in blender"
 maintainer = "Patochun - Patrick M. <ptkmgr@gmail.com>"
