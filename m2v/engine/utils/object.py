@@ -5,7 +5,6 @@ from math import atan2
 import bpy # type: ignore  # pylint: disable=import-error
 import bmesh # type: ignore  # pylint: disable=import-error
 from ..globals import glb, BlenderObjectTypes
-# from ..config.config import BlenderObjectTypes
 from ..utils.collection import move_to_collection
 
 def create_custom_attributes(obj):

@@ -3,6 +3,7 @@
 ###############################################################################
 """
 MIDI module imported from https://github.com/JacquesLucke/animation_nodes
+This part are written by Omar Emara and licensed under the GPLv3 license.
 I was the initiator and participated in the implementation of the MIDI module in Animation Nodes
 Additions:
     added noteMin & noteMax in track object 
@@ -11,6 +12,8 @@ Additions:
     added trackIndexUsed vs trackIndex
 Somes Fix:
     decode("latin-1") instead of decode("utf-8")
+TODO:
+    snake_case
 """
 
 from dataclasses import dataclass, field

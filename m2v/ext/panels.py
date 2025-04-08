@@ -1,5 +1,5 @@
 """
-Main panel for M2V (MIDI to Blender) addon implementation.
+Main panel for M2V (MIDI to Visuals) addon implementation.
 This class creates and manages the main panel interface for the MIDI to Blender (M2B) addon
 in Blender's 3D View sidebar. It provides a user interface for selecting MIDI and audio files,
 configuring animation settings, and generating animations based on MIDI data.
@@ -22,7 +22,7 @@ Example:
 """
 import os
 import bpy  # type: ignore  # pylint: disable=import-error
-from bpy_extras.io_utils import ImportHelper
+from bpy_extras.io_utils import ImportHelper # type: ignore  # pylint: disable=import-error
 
 # Define animation style from animation type
 animation_styles = {
