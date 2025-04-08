@@ -5,7 +5,7 @@ This operator takes MIDI and audio files as input and creates animated visualiza
 It handles initialization of collections, materials, and nodes, processes MIDI data, and generates
 the final animation based on user-selected parameters.
 Attributes:
-    bl_idname (str): Unique identifier for the operator ('m2b.generate_animation')
+    bl_idname (str): Unique identifier for the operator ('M2V.generate_animation')
     bl_label (str): Display name for the operator in Blender UI ('Generate Animation')
 Returns:
     Set[str]: Blender operator return set
@@ -15,11 +15,11 @@ Raises:
     Exception: Any error during the animation generation process will be caught and reported
 Note:
     This operator requires the following scene properties to be set:
-    - m2b.midi_file: Path to input MIDI file
-    - m2b.audio_file: Path to input audio file
-    - m2b.animation_type: Type of animation to generate
-    - m2b.track_mask: Track selection mask
-    - m2b.animation_style: Style of animation
+    - M2V.midi_file: Path to input MIDI file
+    - M2V.audio_file: Path to input audio file
+    - M2V.animation_type: Type of animation to generate
+    - M2V.track_mask: Track selection mask
+    - M2V.animation_style: Style of animation
 """
 from time import time
 from math import ceil
@@ -31,13 +31,13 @@ from ..engine.utils.collection import init_collections
 from ..engine.utils.object import init_materials
 from ..engine.animations.animate import animate
 
-class M2B_OT_GenerateAnimation(bpy.types.Operator):
+class M2V_OT_GenerateAnimation(bpy.types.Operator):
     """
     Blender operator to generate music visualization animation from MIDI and audio files.
     This operator processes MIDI and audio files to create synchronized animations in Blender.
     It handles the complete workflow from initialization to final compositor setup.
     Attributes:
-        bl_idname (str): Internal name of the operator, "m2b.generate_animation"
+        bl_idname (str): Internal name of the operator, "M2V.generate_animation"
         bl_label (str): Display name of the operator, "Generate Animation"
     Returns:
         dict: Status set containing 'FINISHED' on success or 'CANCELLED' on error
@@ -51,12 +51,12 @@ class M2B_OT_GenerateAnimation(bpy.types.Operator):
     5. Generates animation based on selected type, track mask and style
     6. Sets up compositor nodes
     """
-    bl_idname = "m2b.generate_animation"
+    bl_idname = "M2V.generate_animation"
     bl_label = "Generate Animation"
 
     def execute(self, context):
         """
-        Executes the main MIDI to Blender (M2B) animation generation process.
+        Executes the main MIDI To Visuals (M2V) animation generation process.
         This method processes MIDI and audio files to create animations in Blender.
         It handles the full workflow from initialization to final compositor setup.
         Args:
@@ -79,19 +79,19 @@ class M2B_OT_GenerateAnimation(bpy.types.Operator):
         """
 
         scene = context.scene
-        m2b = scene.m2b
+        M2V = scene.M2V
 
         # Initialize
         paths = {
-            "midi": m2b.midi_file,
-            "audio": m2b.audio_file,
-            "log": m2b.midi_file + ".log"
+            "midi": M2V.midi_file,
+            "audio": M2V.audio_file,
+            "log": M2V.midi_file + ".log"
         }
 
         try:
             time_start = time()
 
-            # Core M2B logic
+            # Core M2V logic
             init_log(paths["log"])
             init_collections()
             init_materials()
@@ -102,16 +102,16 @@ class M2B_OT_GenerateAnimation(bpy.types.Operator):
             midi_file, _, glb.tracks = read_midi_file(paths["midi"])
 
             w_log(f"Midi type = {midi_file.midi_format}")
-            w_log(f"animation type = {m2b.animation_type}")
-            w_log(f"track mask = {m2b.track_mask}")
-            w_log(f"animation style = {m2b.animation_style}")
+            w_log(f"animation type = {M2V.animation_type}")
+            w_log(f"track mask = {M2V.track_mask}")
+            w_log(f"animation style = {M2V.animation_style}")
 
             (_, _, _, glb.last_note_time_off,
             note_mid_range_all_tracks) = determine_global_ranges()
 
             w_log(f"Note mid range for all tracks: {note_mid_range_all_tracks}")
 
-            animate(m2b.animation_type, m2b.track_mask, m2b.animation_style)
+            animate(M2V.animation_type, M2V.track_mask, M2V.animation_style)
 
             bpy.context.scene.frame_end = ceil(glb.last_note_time_off + 5) * glb.fps
             create_compositor_nodes()

@@ -96,7 +96,7 @@ def init_collections():
     """
     col_default = bpy.context.scene.collection.children[0]
 
-    glb.master_collection = create_collection("M2B", col_default, False)
+    glb.master_collection = create_collection("M2V", col_default, False)
     purge_unused_datas()
 
     master_col = glb.master_collection

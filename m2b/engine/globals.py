@@ -6,7 +6,7 @@ class BlenderObjectTypes(Enum):
     Enumeration of supported Blender object types.
 
     This enum defines the available primitive and custom object types that can be created
-    in Blender through the M2B engine.
+    in Blender through the M2V engine.
 
     Attributes:
         PLANE: A flat rectangular surface

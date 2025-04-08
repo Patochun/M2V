@@ -1,8 +1,8 @@
 schema_version = "1.0.0"
 
-id = "M2B"
+id = "M2V"
 version = "1.0.0"
-name = "MIDI to Blender"
+name = "MIDI To Visuals"
 tagline = "With MIDI file as input create somes 3D animations in blender"
 maintainer = "Patochun - Patrick M. <ptkmgr@gmail.com>"
 type = "add-on"

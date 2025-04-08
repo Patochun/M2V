@@ -1,10 +1,10 @@
-# M2B - MIDI To Blender
+# M2V - MIDI To Visuals
 
 A blender extension that generates animated 3D visualizations from MIDI files in Blender.
 
 ## Overview
 
-M2B converts MIDI music data into various 3D animated visualizations in Blender. It can create several visualization types including bar graphs, note strips, waterfalls, fireworks, and fountains.
+M2V converts MIDI music data into various 3D animated visualizations in Blender. It can create several visualization types including bar graphs, note strips, waterfalls, fireworks, and fountains.
 
 ## Features
 
