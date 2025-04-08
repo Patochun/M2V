@@ -1,5 +1,5 @@
 """
-M2B (MIDI to Blender) is a Blender addon that generates 3D animations from MIDI files.
+M2V(MIDI to Blender) is a Blender addon that generates 3D animations from MIDI files.
 """
 import bpy # type: ignore  # pylint: disable=import-error
 from .operators.ops import OT_GenerateAnimation

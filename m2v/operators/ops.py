@@ -91,7 +91,7 @@ class OT_GenerateAnimation(bpy.types.Operator):
         try:
             time_start = time()
 
-            # Core M2B logic
+            # Core M2V logic
             init_log(paths["log"])
             init_collections()
             init_materials()
