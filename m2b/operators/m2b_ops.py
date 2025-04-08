@@ -31,7 +31,7 @@ from ..engine.utils.collection import init_collections
 from ..engine.utils.object import init_materials
 from ..engine.animations.animate import animate
 
-class M2V_OT_GenerateAnimation(bpy.types.Operator):
+class OT_GenerateAnimation(bpy.types.Operator):
     """
     Blender operator to generate music visualization animation from MIDI and audio files.
     This operator processes MIDI and audio files to create synchronized animations in Blender.

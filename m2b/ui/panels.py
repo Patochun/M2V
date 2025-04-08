@@ -84,7 +84,7 @@ def update_midi_file(self, context):
     else:
         M2V.audio_file = ""
 
-class M2V_Properties(bpy.types.PropertyGroup):
+class Properties(bpy.types.PropertyGroup):
     """Properties for M2V add-on"""
 
     midi_file: bpy.props.StringProperty(
@@ -130,7 +130,7 @@ class M2V_Properties(bpy.types.PropertyGroup):
         default="*"
     )
 
-class M2V_OT_OpenMidiFile(bpy.types.Operator, ImportHelper):
+class OT_OpenMidiFile(bpy.types.Operator, ImportHelper):
     """Open MIDI File"""
     bl_idname = "M2V.open_midi_file"
     bl_label = "Open MIDI File"
@@ -146,14 +146,14 @@ class M2V_OT_OpenMidiFile(bpy.types.Operator, ImportHelper):
         M2V.midi_file = self.filepath
         return {'FINISHED'}
 
-class M2V_PT_MainPanel(bpy.types.Panel):
+class PT_MainPanel(bpy.types.Panel):
     """
     Main panel for M2V (MIDI To Visuals) addon.
     This panel provides the main interface for the MIDI To Visuals animation generator.
     Located in the 3D View's sidebar under the 'M2V' category.
     """
     bl_label = "M2V - MIDI To Visuals"
-    bl_idname = "M2V_PT_MainPanel"
+    bl_idname = "PT_MainPanel"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
     bl_category = 'M2V'

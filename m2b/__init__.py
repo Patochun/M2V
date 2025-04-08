@@ -2,8 +2,8 @@
 M2V (MIDI To Visuals) is a Blender addon that generates 3D animations from MIDI files.
 """
 import bpy # type: ignore  # pylint: disable=import-error
-from .operators.M2V_ops import M2V_OT_GenerateAnimation
-from .ui.panels import M2V_Properties, M2V_PT_MainPanel, M2V_OT_OpenMidiFile
+from .operators.ops import OT_GenerateAnimation
+from .ui.panels import Properties, PT_MainPanel, OT_OpenMidiFile
 
 # bl_info = {
 #     "name": "M2V - MIDI To Visuals",
@@ -17,10 +17,10 @@ from .ui.panels import M2V_Properties, M2V_PT_MainPanel, M2V_OT_OpenMidiFile
 
 # Register classes
 classes = (
-    M2V_Properties,
-    M2V_OT_OpenMidiFile,
-    M2V_OT_GenerateAnimation,
-    M2V_PT_MainPanel,
+    Properties,
+    OT_OpenMidiFile,
+    OT_GenerateAnimation,
+    PT_MainPanel,
 )
 
 def register():
@@ -29,7 +29,7 @@ def register():
 
     This function performs the following actions:
     1. Registers all classes defined in the 'classes' list with Blender
-    2. Creates a pointer property 'M2V' in the Scene type that points to M2V_Properties
+    2. Creates a pointer property 'M2V' in the Scene type that points to Properties
 
     Note:
         This function should be called when the addon is enabled/registered in Blender.
@@ -37,11 +37,11 @@ def register():
     Dependencies:
         - bpy: Blender Python API
         - classes: List of classes to be registered
-        - M2V_Properties: Property group class for storing addon properties
+        - Properties: Property group class for storing addon properties
     """
     for cls in classes:
         bpy.utils.register_class(cls)
-    bpy.types.Scene.M2V = bpy.props.PointerProperty(type=M2V_Properties)
+    bpy.types.Scene.M2V = bpy.props.PointerProperty(type=Properties)
 
 def unregister():
     """
