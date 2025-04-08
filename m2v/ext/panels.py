@@ -148,7 +148,6 @@ class PT_MainPanel(bpy.types.Panel):
         box = layout.box()
         box.label(text="MIDI File:")
         box.operator("m2b.open_midi_file")
-        # box.prop(m2b, "midi_file", text="")
         box.prop(m2b, "audio_file")
 
         box = layout.box()
@@ -158,4 +157,4 @@ class PT_MainPanel(bpy.types.Panel):
 
         row = layout.row()
         row.scale_y = 2.0
-        row.operator("m2v.generate_animation")
+        row.operator("scene.m2v_generate_animation")

@@ -21,7 +21,8 @@ class OT_GenerateAnimation(bpy.types.Operator):
     This operator processes MIDI and audio files to create synchronized animations in Blender.
     It handles the complete workflow from initialization to final compositor setup.
     """
-    bl_idname = "m2v.generate_animation"
+    # bl_idname = "m2v.generate_animation"
+    bl_idname = "scene.m2v_generate_animation"
     bl_label = "Generate Animation"
 
     @classmethod
