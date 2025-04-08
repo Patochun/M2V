@@ -3,6 +3,7 @@ Module for handling Blender collections.
 """
 import bpy # type: ignore  # pylint: disable=import-error
 from ..globals import glb
+from ..utils.stuff import w_log
 
 def delete_collection_recursive(collection):
     """
@@ -70,13 +71,34 @@ def create_collection(col_name, col_parent, empty_loc_master=True):
 
     return new_collection
 
+def purge_unused_datas():
+    """
+    Purge all orphaned (unused) data in the current Blender file.
+    """
+    purged_items = 0
+    data_categories = [
+        bpy.data.objects, bpy.data.curves, bpy.data.meshes, bpy.data.materials,
+        bpy.data.textures, bpy.data.images, bpy.data.particles, bpy.data.node_groups,
+        bpy.data.actions, bpy.data.collections, bpy.data.sounds
+    ]
+
+    for data_block in data_categories:
+        for item in list(data_block):
+            if not item.users:
+                data_block.remove(item)
+                purged_items += 1
+
+    w_log(f"Purging complete. {purged_items} orphaned data cleaned up.")
+
 def init_collections():
     """
     Initialize global variables that require Blender context
     """
     col_default = bpy.context.scene.collection.children[0]
 
-    glb.master_collection = create_collection("M2V", col_default, False)
+    glb.master_collection = create_collection("M2B", col_default, False)
+    purge_unused_datas()
+
     master_col = glb.master_collection
 
     glb.master_loc_collection = create_collection(
