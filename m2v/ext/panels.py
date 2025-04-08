@@ -156,7 +156,7 @@ class PT_MainPanel(bpy.types.Panel):
     bl_idname = "PT_MainPanel"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
-    bl_category = 'M2B'
+    bl_category = 'M2V'
 
     def draw(self, context):
         """Draw the main M2V panel layout in Blender."""
@@ -176,4 +176,4 @@ class PT_MainPanel(bpy.types.Panel):
 
         row = layout.row()
         row.scale_y = 2.0
-        row.operator("m2b.generate_animation")
+        row.operator("m2v.generate_animation")

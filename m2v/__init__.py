@@ -1,9 +1,9 @@
 """
-M2V(MIDI to Blender) is a Blender addon that generates 3D animations from MIDI files.
+M2V - (MIDI to Visuals) is a Blender addon that generates 3D animations from MIDI files.
 """
 import bpy # type: ignore  # pylint: disable=import-error
-from .operators.ops import OT_GenerateAnimation
-from .ui.panels import M2B_Properties, PT_MainPanel, OT_OpenMidiFile
+from .ext.ops import OT_GenerateAnimation
+from .ext.panels import M2B_Properties, PT_MainPanel, OT_OpenMidiFile
 
 # Register classes
 classes = (

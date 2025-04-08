@@ -5,7 +5,7 @@ This operator takes MIDI and audio files as input and creates animated visualiza
 It handles initialization of collections, materials, and nodes, processes MIDI data, and generates
 the final animation based on user-selected parameters.
 Attributes:
-    bl_idname (str): Unique identifier for the operator ('m2b.generate_animation')
+    bl_idname (str): Unique identifier for the operator ('generate_animation')
     bl_label (str): Display name for the operator in Blender UI ('Generate Animation')
 Returns:
     Set[str]: Blender operator return set
@@ -37,7 +37,7 @@ class OT_GenerateAnimation(bpy.types.Operator):
     This operator processes MIDI and audio files to create synchronized animations in Blender.
     It handles the complete workflow from initialization to final compositor setup.
     Attributes:
-        bl_idname (str): Internal name of the operator, "m2b.generate_animation"
+        bl_idname (str): Internal name of the operator, "m2v.generate_animation"
         bl_label (str): Display name of the operator, "Generate Animation"
     Returns:
         dict: Status set containing 'FINISHED' on success or 'CANCELLED' on error
@@ -51,12 +51,12 @@ class OT_GenerateAnimation(bpy.types.Operator):
     5. Generates animation based on selected type, track mask and style
     6. Sets up compositor nodes
     """
-    bl_idname = "m2b.generate_animation"
+    bl_idname = "m2v.generate_animation"
     bl_label = "Generate Animation"
 
     def execute(self, context):
         """
-        Executes the main MIDI to Blender (M2B) animation generation process.
+        Executes the main MIDI to Blender (m2v) animation generation process.
         This method processes MIDI and audio files to create animations in Blender.
         It handles the full workflow from initialization to final compositor setup.
         Args:
