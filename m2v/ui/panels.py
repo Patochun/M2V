@@ -1,6 +1,6 @@
 """
-Main panel for M2V (MIDI To Visuals) addon implementation.
-This class creates and manages the main panel interface for the MIDI To Visuals (M2V) addon
+Main panel for M2B (MIDI to Blender) addon implementation.
+This class creates and manages the main panel interface for the MIDI to Blender (M2B) addon
 in Blender's 3D View sidebar. It provides a user interface for selecting MIDI and audio files,
 configuring animation settings, and generating animations based on MIDI data.
 Class Attributes:
@@ -9,7 +9,7 @@ Class Attributes:
     bl_space_type (str): Blender editor type where the panel appears (3D View)
     bl_region_type (str): Region of the editor where the panel appears (UI sidebar)
     bl_category (str): Tab category name in the sidebar
-Properties (accessed via context.scene.M2V):
+Properties (accessed via context.scene.m2b):
     midi_file (str): Path to the input MIDI file
     audio_file (str): Path to the accompanying audio file
     animation_type (enum): Type of animation to generate
@@ -18,7 +18,7 @@ Properties (accessed via context.scene.M2V):
     draw(context): Creates and arranges UI elements in the panel
 Example:
     This panel is automatically registered with Blender's UI system and appears
-    in the 3D View sidebar under the 'M2V' tab when the addon is enabled.
+    in the 3D View sidebar under the 'M2B' tab when the addon is enabled.
 """
 import os
 import bpy  # type: ignore  # pylint: disable=import-error
@@ -59,33 +59,33 @@ animation_styles = {
 
 def get_animation_styles(self, context):
     """Return the list of styles based on the current animation type."""
-    M2V = context.scene.M2V
-    current_type = M2V.animation_type
+    m2b = context.scene.m2b
+    current_type = m2b.animation_type
     return animation_styles.get(current_type, [])
 
 def update_animation_style(self, context):
     """Callback to update animation style from type"""
-    M2V = context.scene.M2V
-    current_type = M2V.animation_type
+    m2b = context.scene.m2b
+    current_type = m2b.animation_type
     styles = animation_styles.get(current_type, [])
 
     # Reset animation style if not in the list of styles
-    if M2V.animation_style not in [style[0] for style in styles]:
-        M2V.animation_style = styles[0][0] if styles else ""
+    if m2b.animation_style not in [style[0] for style in styles]:
+        m2b.animation_style = styles[0][0] if styles else ""
 
 def update_midi_file(self, context):
     """Callback to update midi file"""
-    M2V = context.scene.M2V
-    current_midi_file = M2V.midi_file
+    m2b = context.scene.m2b
+    current_midi_file = m2b.midi_file
     name_without_ext = os.path.splitext(current_midi_file)[0]
     current_audio_file = name_without_ext + ".mp3"
     if os.path.exists(current_audio_file):
-        M2V.audio_file = current_audio_file
+        m2b.audio_file = current_audio_file
     else:
-        M2V.audio_file = ""
+        m2b.audio_file = ""
 
-class Properties(bpy.types.PropertyGroup):
-    """Properties for M2V add-on"""
+class M2B_Properties(bpy.types.PropertyGroup):
+    """Properties for M2B add-on"""
 
     midi_file: bpy.props.StringProperty(
         name="MIDI File",
@@ -130,9 +130,9 @@ class Properties(bpy.types.PropertyGroup):
         default="*"
     )
 
-class OT_OpenMidiFile(bpy.types.Operator, ImportHelper):
+class M2B_OT_OpenMidiFile(bpy.types.Operator, ImportHelper):
     """Open MIDI File"""
-    bl_idname = "M2V.open_midi_file"
+    bl_idname = "m2b.open_midi_file"
     bl_label = "Open MIDI File"
     bl_options = {'REGISTER', 'UNDO'}
 
@@ -142,38 +142,38 @@ class OT_OpenMidiFile(bpy.types.Operator, ImportHelper):
     )
 
     def execute(self, context):
-        M2V = context.scene.M2V
-        M2V.midi_file = self.filepath
+        m2b = context.scene.m2b
+        m2b.midi_file = self.filepath
         return {'FINISHED'}
 
-class PT_MainPanel(bpy.types.Panel):
+class M2B_PT_MainPanel(bpy.types.Panel):
     """
-    Main panel for M2V (MIDI To Visuals) addon.
-    This panel provides the main interface for the MIDI To Visuals animation generator.
-    Located in the 3D View's sidebar under the 'M2V' category.
+    Main panel for M2B (MIDI to Blender) addon.
+    This panel provides the main interface for the MIDI to Blender animation generator.
+    Located in the 3D View's sidebar under the 'M2B' category.
     """
-    bl_label = "M2V - MIDI To Visuals"
-    bl_idname = "PT_MainPanel"
+    bl_label = "M2B - MIDI to Blender"
+    bl_idname = "M2B_PT_MainPanel"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
-    bl_category = 'M2V'
+    bl_category = 'M2B'
 
     def draw(self, context):
-        """Draw the main M2V panel layout in Blender."""
+        """Draw the main M2B panel layout in Blender."""
         layout = self.layout
-        M2V = context.scene.M2V
+        m2b = context.scene.m2b
 
         box = layout.box()
         box.label(text="MIDI File:")
-        box.operator("M2V.open_midi_file")
-        # box.prop(M2V, "midi_file", text="")
-        box.prop(M2V, "audio_file")
+        box.operator("m2b.open_midi_file")
+        # box.prop(m2b, "midi_file", text="")
+        box.prop(m2b, "audio_file")
 
         box = layout.box()
-        box.prop(M2V, "animation_type")
-        box.prop(M2V, "animation_style")
-        box.prop(M2V, "track_mask")
+        box.prop(m2b, "animation_type")
+        box.prop(m2b, "animation_style")
+        box.prop(m2b, "track_mask")
 
         row = layout.row()
         row.scale_y = 2.0
-        row.operator("M2V.generate_animation")
+        row.operator("m2b.generate_animation")
