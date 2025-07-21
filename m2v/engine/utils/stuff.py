@@ -228,26 +228,3 @@ def load_audio(audio_path_str):
     )
 
     w_log(f"Audio file loaded into VSE: {audio_path_str}")
-
-def load_audio2(audio_path):
-    """Load audio file mp3 with the same name of midi file if exists"""
-    if path.exists(audio_path):
-        if not bpy.context.scene.sequence_editor:
-            bpy.context.scene.sequence_editor_create()
-
-        bpy.context.scene.sequence_editor_clear()
-        my_contextmem = bpy.context.area.type
-        my_context = 'SEQUENCE_EDITOR'
-        bpy.context.area.type = my_context
-        my_context = bpy.context.area.type
-        bpy.ops.sequencer.sound_strip_add(
-            filepath=audio_path,
-            relative_path=True,
-            frame_start=1,
-            channel=1
-        )
-        bpy.context.area.type = my_contextmem
-        my_context = bpy.context.area.type
-        w_log("Audio file mp3 is loaded into VSE")
-    else:
-        w_log("Audio file mp3 not exist")
