@@ -197,7 +197,39 @@ def determine_global_ranges():
         stats['note_mid_range']
     )
 
-def load_audio(audio_path):
+def load_audio(audio_path_str):
+    """
+    Load the provided audio file into the VSE at the given offset_time (in seconds),
+    without relying on the UI or context overrides.
+    """
+    scene = bpy.context.scene
+
+    # Create the sequence editor if it doesn't exist
+    if scene.sequence_editor is None:
+        scene.sequence_editor_create()
+
+    # Force refresh
+    seq_editor = scene.sequence_editor
+    if seq_editor is None:
+        w_log("Error: sequence_editor could not be created.")
+        return
+
+    # Clear previous strips (optional, depending on your logic)
+    seq_editor_clear = getattr(seq_editor, "clear", None)
+    if callable(seq_editor_clear):
+        seq_editor.clear()
+
+    # Add the sound strip directly
+    seq_editor.sequences.new_sound(
+        name="Audio",
+        filepath=audio_path_str,
+        channel=1,
+        frame_start=0
+    )
+
+    w_log(f"Audio file loaded into VSE: {audio_path_str}")
+
+def load_audio2(audio_path):
     """Load audio file mp3 with the same name of midi file if exists"""
     if path.exists(audio_path):
         if not bpy.context.scene.sequence_editor:
