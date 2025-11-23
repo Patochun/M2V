@@ -115,37 +115,43 @@ def extract_octave_and_note(note_number):
     return octave, note_number
 
 def create_compositor_nodes():
-    """Creates a Compositor node setup for post-processing effects"""
-    # Enable the compositor
-    bpy.context.scene.use_nodes = True
-    node_tree = bpy.context.scene.node_tree
+    """Create a compact compositor node group with glare connected directly to group output."""
+    group_name = "My new comp"
 
-    # Remove existing nodes
-    for node in node_tree.nodes:
-        node_tree.nodes.remove(node)
+    # create or reset node group
+    if group_name in bpy.data.node_groups:
+        node_tree = bpy.data.node_groups[group_name]
+        bpy.data.node_groups.remove(node_tree, do_unlink=True)
+    node_tree = bpy.data.node_groups.new(group_name, "CompositorNodeTree")
 
-    # Add necessary nodes
-    render_layers_node = node_tree.nodes.new(type='CompositorNodeRLayers')
-    render_layers_node.location = (0, 0)
+    bpy.context.scene.compositing_node_group = node_tree
 
-    glare_node = node_tree.nodes.new(type='CompositorNodeGlare')
+    if "Image" not in node_tree.interface.items_tree:
+        node_tree.interface.new_socket(name="Image", in_out="OUTPUT", socket_type="NodeSocketColor")
+
+    # start node: render layers
+    rlayers = node_tree.nodes.new(type="CompositorNodeRLayers")
+    rlayers.location = (0, 0)
+
+    # glare node (bloom)
+    glare_node = node_tree.nodes.new(type="CompositorNodeGlare")
     glare_node.location = (300, 0)
+    glare_node.inputs['Type'].default_value = 'Bloom'
+    glare_node.inputs['Quality'].default_value = 'Medium'
+    glare_node.inputs['Strength'].default_value = 2.0
+    glare_node.inputs['Size'].default_value = 1.0
 
-    # Configure the Glare node
-    glare_node.glare_type = 'BLOOM'
-    glare_node.quality = 'MEDIUM'
-    glare_node.mix = 0.0
-    glare_node.threshold = 5
-    glare_node.size = 4
+    # group output node
+    group_output = node_tree.nodes.new(type='NodeGroupOutput')
+    group_output.location = (600, 0)
 
-    composite_node = node_tree.nodes.new(type='CompositorNodeComposite')
-    composite_node.location = (600, 0)
-
-    # Connect the nodes
+    # connect nodes: rlayers -> glare -> group_output(Image)
     links = node_tree.links
-    links.new(render_layers_node.outputs['Image'], glare_node.inputs['Image'])
-    links.new(glare_node.outputs['Image'], composite_node.inputs['Image'])
+    links.new(rlayers.outputs.get("Image"), glare_node.inputs.get('Image'))
+    links.new(glare_node.outputs.get('Image'), group_output.inputs.get("Image"))
 
+    # active compositor in always mode
+    bpy.context.space_data.shading.use_compositor = 'ALWAYS'
 
 def set_blender_units(unit_scale=0.01, length_unit="CENTIMETERS"):
     """Define blender unit system"""
@@ -200,7 +206,7 @@ def determine_global_ranges():
 def load_audio(audio_path_str):
     """
     Load the provided audio file into the VSE at the given offset_time (in seconds),
-    without relying on the UI or context overrides.
+    removing any existing sound strips first.
     """
     scene = bpy.context.scene
 
@@ -208,19 +214,21 @@ def load_audio(audio_path_str):
     if scene.sequence_editor is None:
         scene.sequence_editor_create()
 
-    # Force refresh
     seq_editor = scene.sequence_editor
     if seq_editor is None:
         w_log("Error: sequence_editor could not be created.")
         return
 
-    # Clear previous strips (optional, depending on your logic)
-    seq_editor_clear = getattr(seq_editor, "clear", None)
-    if callable(seq_editor_clear):
-        seq_editor.clear()
+    # Remove all existing sound strips
+    # for strip in list(seq_editor.sequences_all):
+    for strip in list(seq_editor.strips_all):
+        if strip.type == 'SOUND':
+            seq_editor.strips.remove(strip)
+            # seq_editor.sequences.remove(strip)
 
     # Add the sound strip directly
-    seq_editor.sequences.new_sound(
+    # seq_editor.sequences.new_sound(
+    seq_editor.strips.new_sound(
         name="Audio",
         filepath=audio_path_str,
         channel=1,

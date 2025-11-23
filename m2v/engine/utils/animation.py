@@ -375,6 +375,15 @@ def anim_circle_curve(curve, rotation_speed):
     curve.keyframe_insert(data_path="rotation_euler", index=2, frame=end_frame)
 
     # Make animation linear
-    for fcurve in curve.animation_data.action.fcurves:
+    # for fcurve in curve.animation_data.action.fcurves:
+    #     for keyframe in fcurve.keyframe_points:
+    #         keyframe.interpolation = 'LINEAR'
+
+    # # Make animation linear
+    # After inserting all keyframes, change interpolation to LINEAR
+    channel_bag = curve.animation_data.action.layers[0].strips[0].channelbags[0]
+    fcurve = channel_bag.fcurves.find("rotation_euler", index=2)
+    # for fcurve in bouncing_obj.animation_data.action.fcurves:
+    if fcurve.data_path == "rotation_euler" and fcurve.array_index == 2:  # Z axis
         for keyframe in fcurve.keyframe_points:
             keyframe.interpolation = 'LINEAR'
