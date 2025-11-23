@@ -3,14 +3,14 @@ M2V - (MIDI to Visuals) is a Blender addon that generates 3D animations from MID
 """
 import bpy # type: ignore  # pylint: disable=import-error
 from .ext.ops import OT_GenerateAnimation
-from .ext.panels import M2V_Properties, PT_MainPanel, OT_OpenMidiFile
+from .ext.panels import M2V_Properties, M2V_PT_MainPanel, OT_OpenMidiFile
 
 # Register classes
 classes = (
     M2V_Properties,
     OT_OpenMidiFile,
     OT_GenerateAnimation,
-    PT_MainPanel,
+    M2V_PT_MainPanel,
 )
 
 def register():

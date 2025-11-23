@@ -128,14 +128,14 @@ class OT_OpenMidiFile(bpy.types.Operator, ImportHelper):
         m2b.midi_file = self.filepath
         return {'FINISHED'}
 
-class PT_MainPanel(bpy.types.Panel):
+class M2V_PT_MainPanel(bpy.types.Panel):
     """
     Panel Type = Main panel for M2V (MIDI to Blender) addon.
     This panel provides the main interface for the MIDI to Blender animation generator.
     Located in the 3D View's sidebar under the 'M2B' category.
     """
     bl_label = "M2V - MIDI to Visuals"
-    bl_idname = "PT_MainPanel"
+    bl_idname = "M2V_PT_MainPanel"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
     bl_category = 'M2V'
