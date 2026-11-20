@@ -95,13 +95,21 @@ def create_waterfall(track_mask, type_anim):
     camera_obj.data.shift_y = -0.01
 
     # Add a keyframe for the starting Y position
-    camera_obj.location.y = offset_y_camera + location_y - (size_y/2)
+    camera_obj.location = (
+        0,
+        offset_y_camera + location_y - (size_y/2),
+        camera_location_z,
+    )
     camera_obj.keyframe_insert(data_path="location",
                                index=1,
                                frame=0)
 
     # Add a keyframe for the ending Y position
-    camera_obj.location.y = offset_y_camera + location_y + (size_y/2)
+    camera_obj.location = (
+        0,
+        offset_y_camera + location_y + (size_y/2),
+        camera_location_z,
+    )
     camera_obj.keyframe_insert(data_path="location",
                                index=1,
                                frame=note_max_time_off[1].time_off*fps)

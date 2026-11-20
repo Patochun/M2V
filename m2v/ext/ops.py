@@ -26,7 +26,7 @@ from ..engine.utils.stuff import (
 )
 
 
-class OT_GenerateAnimation(bpy.types.Operator):
+class OT_GenerateAnimation(bpy.types.Operator):  # pylint: disable=invalid-name
     """Generate music visualization animation from MIDI and audio files.
 
     This operator processes MIDI and audio files to create synchronized

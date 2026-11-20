@@ -42,14 +42,14 @@ ANIMATION_STYLES = {
 }
 
 
-def get_animation_styles(self, context):
+def get_animation_styles(_self, context):
     """Return the list of styles based on the current animation type."""
     m2b = context.scene.m2b
     current_type = m2b.animation_type
     return ANIMATION_STYLES.get(current_type, [])
 
 
-def update_animation_style(self, context):
+def update_animation_style(_self, context):
     """Callback to update animation style from type."""
     m2b = context.scene.m2b
     current_type = m2b.animation_type
@@ -59,7 +59,7 @@ def update_animation_style(self, context):
         m2b.animation_style = styles[0][0] if styles else ""
 
 
-def update_midi_file(self, context):
+def update_midi_file(_self, context):
     """Callback to update midi file."""
     m2b = context.scene.m2b
     current_midi_file = m2b.midi_file
@@ -71,7 +71,7 @@ def update_midi_file(self, context):
         m2b.audio_file = ""
 
 
-class M2V_Properties(bpy.types.PropertyGroup):
+class M2V_Properties(bpy.types.PropertyGroup):  # pylint: disable=invalid-name
     """Properties for M2V add-on."""
 
     midi_file: bpy.props.StringProperty(
@@ -116,7 +116,7 @@ class M2V_Properties(bpy.types.PropertyGroup):
     )
 
 
-class OT_OpenMidiFile(bpy.types.Operator, ImportHelper):
+class OT_OpenMidiFile(bpy.types.Operator, ImportHelper):  # pylint: disable=invalid-name
     """Open MIDI File operator."""
 
     bl_idname = "wm.open_midi_file"
@@ -128,11 +128,11 @@ class OT_OpenMidiFile(bpy.types.Operator, ImportHelper):
     def execute(self, context):
         """Execute the open file dialog."""
         m2b = context.scene.m2b
-        m2b.midi_file = self.filepath
+        m2b.midi_file = self.filepath  # pylint: disable=no-member
         return {"FINISHED"}
 
 
-class M2V_PT_MainPanel(bpy.types.Panel):
+class M2V_PT_MainPanel(bpy.types.Panel):  # pylint: disable=invalid-name
     """Main panel for M2V (MIDI to Blender) addon.
 
     This panel provides the main interface for the MIDI to Blender animation
