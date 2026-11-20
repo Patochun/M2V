@@ -9,7 +9,7 @@ from ..context import AnimationContext
 
 def init_log(log_file: str, ctx: AnimationContext) -> None:
     """Open log file for append."""
-    ctx.f_log = open(log_file, "w+", encoding="utf-8")  # noqa: SIM115
+    ctx.f_log = open(log_file, "w+", encoding="utf-8")
 
 
 def w_log(to_log: str, ctx: AnimationContext) -> None:
