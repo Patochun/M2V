@@ -4,7 +4,7 @@ import re
 
 import bpy  # type: ignore  # pylint: disable=import-error
 
-from ..context import AnimationContext
+from ..context import AnimationContext, get_animation_context
 
 
 def init_log(log_file: str, ctx: AnimationContext) -> None:
@@ -12,8 +12,15 @@ def init_log(log_file: str, ctx: AnimationContext) -> None:
     ctx.f_log = open(log_file, "w+", encoding="utf-8")
 
 
-def w_log(to_log: str, ctx: AnimationContext) -> None:
-    """Write to screen and log."""
+def w_log(to_log: str, ctx: AnimationContext | None = None) -> None:
+    """Write to screen and log.
+    
+    Args:
+        to_log: Message to log
+        ctx: Animation context (optional, uses get_animation_context() if not provided)
+    """
+    if ctx is None:
+        ctx = get_animation_context()
     print(to_log)
     if ctx.f_log is not None:
         ctx.f_log.write(to_log + "\n")
@@ -25,13 +32,13 @@ def end_log(ctx: AnimationContext) -> None:
         ctx.f_log.close()
 
 
-def parse_range_from_tracks(range_str: str, ctx: AnimationContext) -> tuple:
+def parse_range_from_tracks(range_str: str, ctx: AnimationContext | None = None) -> tuple:
     """
     Parse a range string and return track selection data.
 
     Args:
         range_str: Range string (e.g., "1-5,7,10-12" or "*")
-        ctx: Animation context
+        ctx: Animation context (optional, uses get_animation_context() if not provided)
 
     Returns:
         tuple: (selected_tracks, note_min, note_max, octave_count,
@@ -69,6 +76,9 @@ def parse_range_from_tracks(range_str: str, ctx: AnimationContext) -> tuple:
             toggle = not toggle
 
         return result
+
+    if ctx is None:
+        ctx = get_animation_context()
 
     tracks = ctx.tracks
     w_log(f"Track filter used = {range_str}", ctx)
