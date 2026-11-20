@@ -1,6 +1,11 @@
-"""Class shared by all"""
+"""Global constants and state management for M2V engine."""
 
 from enum import Enum
+from typing import Any
+
+from .context import get_animation_context
+
+
 class BlenderObjectTypes(Enum):
     """
     Enumeration of supported Blender object types.
@@ -19,6 +24,7 @@ class BlenderObjectTypes(Enum):
         POINT: A single point light in 3D space
         EMPTY: An empty object that can be used as a parent or placeholder
     """
+
     PLANE = "plane"
     ICOSPHERE = "icosphere"
     UVSPHERE = "uvsphere"
@@ -28,19 +34,25 @@ class BlenderObjectTypes(Enum):
     LIGHTSHOW = "lightshow"
     POINT = "point"
     EMPTY = "empty"
-    
-   
 
-class GlobalState:
-    """Some datas with global scope"""
-    def __init__(self):
-        self.fps = 0
-        self.tracks = []
-        self.last_note_time_off = 0.0
-        self.mat_global_custom: None
-        self.master_collection: None
-        self.master_loc_collection: None
-        self.hidden_collection: None
-        self.f_log: None
 
-glb = GlobalState()
+class _GlobalStateProxy:
+    """Proxy to AnimationContext for backward compatibility.
+
+    This allows old code using `glb.attribute` to work with the new context system.
+    """
+
+    def __getattr__(self, name: str) -> Any:
+        """Delegate attribute access to the current AnimationContext."""
+        ctx = get_animation_context()
+        return getattr(ctx, name)
+
+    def __setattr__(self, name: str, value: Any) -> None:
+        """Delegate attribute setting to the current AnimationContext."""
+        ctx = get_animation_context()
+        setattr(ctx, name, value)
+
+
+# Backward compatibility: expose as module-level global
+glb = _GlobalStateProxy()
+

@@ -1,12 +1,18 @@
 """
 Module for firework version 1 animation with geomtry nodes
 """
-import bpy # type: ignore  # pylint: disable=import-error
-from ..globals import glb, BlenderObjectTypes
-from ..utils.collection import create_collection
-from ..utils.object import create_blender_object, create_duplicate_linked_object, get_object_by_name
+import bpy  # type: ignore  # pylint: disable=import-error
+
+from ..globals import BlenderObjectTypes, glb
 from ..utils.animation import note_animate
-from ..utils.stuff import w_log, parse_range_from_tracks
+from ..utils.collection import create_collection
+from ..utils.object import (
+    create_blender_object,
+    create_duplicate_linked_object,
+    get_object_by_name,
+)
+from ..utils.stuff import parse_range_from_tracks, w_log
+
 
 def create_sp_cloud_gn(name_gn, obj, sparkles_material):
     """

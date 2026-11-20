@@ -2,10 +2,13 @@
 Module to create a waterfall visualization of MIDI notes with animated camera movement.
 """
 from math import tan
-import bpy # type: ignore  # pylint: disable=import-error
+
+import bpy  # type: ignore  # pylint: disable=import-error
+
 from ..globals import glb
+from ..utils.stuff import parse_range_from_tracks, w_log
 from .strip_notes import create_strip_notes
-from ..utils.stuff import w_log, parse_range_from_tracks
+
 
 def create_waterfall(track_mask, type_anim):
     """

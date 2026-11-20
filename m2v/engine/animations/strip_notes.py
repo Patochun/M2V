@@ -1,16 +1,17 @@
 """
 Module to create a strip-based visualization of MIDI notes with animations.
 """
-from ..globals import glb, BlenderObjectTypes
+from ..globals import BlenderObjectTypes, glb
+from ..utils.animation import note_animate
 from ..utils.collection import create_collection
 from ..utils.object import create_blender_object, create_duplicate_linked_object
-from ..utils.animation import note_animate
 from ..utils.stuff import (
-    w_log,
-    parse_range_from_tracks,
     color_from_note_number,
-    extract_octave_and_note
+    extract_octave_and_note,
+    parse_range_from_tracks,
+    w_log,
 )
+
 
 def create_strip_notes(track_mask, type_anim):
     """

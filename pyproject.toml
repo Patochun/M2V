@@ -1,0 +1,21 @@
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = [
+    "E",    # pycodestyle errors
+    "W",    # pycodestyle warnings
+    "F",    # pyflakes
+    "I",    # isort
+    "UP",   # pyupgrade
+    "BLE",  # flake8-blind-except
+    "RUF",  # ruff-specific rules
+]
+ignore = [
+    "E501",  # line too long (handled separately)
+    "BLE001", # Do not catch blind exception
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["m2v"]

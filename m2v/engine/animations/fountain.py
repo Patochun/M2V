@@ -1,14 +1,29 @@
 """
 Module for fountain animation
 """
-from math import radians, cos, sin, tan, degrees
-import bpy # type: ignore  # pylint: disable=import-error
-from ..globals import glb, BlenderObjectTypes
+from math import cos, degrees, radians, sin, tan
+
+import bpy  # type: ignore  # pylint: disable=import-error
+
+from ..globals import BlenderObjectTypes, glb
+from ..utils.animation import (
+    anim_circle_curve,
+    distribute_objects_with_clamp_to,
+    note_animate,
+)
 from ..utils.collection import create_collection
-from ..utils.object import create_blender_object, create_duplicate_linked_object, get_object_by_name
-from ..utils.stuff import (w_log, parse_range_from_tracks, extract_octave_and_note,
-                           color_from_note_number)
-from ..utils.animation import note_animate, distribute_objects_with_clamp_to, anim_circle_curve
+from ..utils.object import (
+    create_blender_object,
+    create_duplicate_linked_object,
+    get_object_by_name,
+)
+from ..utils.stuff import (
+    color_from_note_number,
+    extract_octave_and_note,
+    parse_range_from_tracks,
+    w_log,
+)
+
 
 def create_fountain(track_mask, type_anim):
     """

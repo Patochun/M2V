@@ -1,11 +1,17 @@
 """
 Module for firework version 2 animation with particle system
 """
-import bpy # type: ignore  # pylint: disable=import-error
-from ..globals import glb, BlenderObjectTypes
+import bpy  # type: ignore  # pylint: disable=import-error
+
+from ..globals import BlenderObjectTypes, glb
 from ..utils.collection import create_collection
-from ..utils.object import create_blender_object, create_duplicate_linked_object, get_object_by_name
-from ..utils.stuff import w_log, parse_range_from_tracks
+from ..utils.object import (
+    create_blender_object,
+    create_duplicate_linked_object,
+    get_object_by_name,
+)
+from ..utils.stuff import parse_range_from_tracks, w_log
+
 
 def create_fireworks_v2(track_mask, type_anim):
     """

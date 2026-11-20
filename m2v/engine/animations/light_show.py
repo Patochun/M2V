@@ -2,12 +2,15 @@
 Module for light show animation
 """
 from colorsys import hsv_to_rgb
-import bpy # type: ignore  # pylint: disable=import-error
-from ..globals import glb, BlenderObjectTypes
+
+import bpy  # type: ignore  # pylint: disable=import-error
+
+from ..globals import BlenderObjectTypes, glb
+from ..utils.animation import anim_circle_curve, distribute_objects_with_clamp_to
 from ..utils.collection import create_collection
 from ..utils.object import create_blender_object, create_duplicate_linked_object
-from ..utils.stuff import w_log, parse_range_from_tracks, extract_octave_and_note
-from ..utils.animation import distribute_objects_with_clamp_to, anim_circle_curve
+from ..utils.stuff import extract_octave_and_note, parse_range_from_tracks, w_log
+
 
 # Return a list of color r,g,b,a dispatched
 def generate_hsv_colors(n_series):

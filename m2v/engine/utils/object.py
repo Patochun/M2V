@@ -2,10 +2,13 @@
 Module about blender objects
 """
 from math import atan2
-import bpy # type: ignore  # pylint: disable=import-error
-import bmesh # type: ignore  # pylint: disable=import-error
-from ..globals import glb, BlenderObjectTypes
+
+import bmesh  # type: ignore  # pylint: disable=import-error
+import bpy  # type: ignore  # pylint: disable=import-error
+
+from ..globals import BlenderObjectTypes, glb
 from ..utils.collection import move_to_collection
+
 
 def create_custom_attributes(obj):
     """
@@ -128,7 +131,7 @@ def create_blender_object(
             pole_north = max(original_vertices, key=lambda v: v.co.z)
             sorted_verts = [pole_north]
 
-            unique_z_values = sorted(set(v.co.z for v in original_vertices), reverse=True)[1:-1]
+            unique_z_values = sorted({v.co.z for v in original_vertices}, reverse=True)[1:-1]
 
             for z in unique_z_values:
                 ring_verts = [v for v in original_vertices if v.co.z == z]

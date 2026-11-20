@@ -2,12 +2,13 @@
 Root module for animation
 """
 from .bar_graph import create_blender_bg_animation
-from .strip_notes import create_strip_notes
-from .water_fall import create_waterfall
 from .fireworks_gn import create_fireworks_v1
 from .fireworks_particules import create_fireworks_v2
 from .fountain import create_fountain
 from .light_show import create_light_show
+from .strip_notes import create_strip_notes
+from .water_fall import create_waterfall
+
 
 def animate(animation, track_mask, animation_type):
     """

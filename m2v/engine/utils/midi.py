@@ -16,11 +16,11 @@ TODO:
     snake_case
 """
 
-from dataclasses import dataclass, field
-from typing import List
-import struct
 import mmap
+import struct
+from dataclasses import dataclass, field
 from os import SEEK_CUR
+
 
 def evaluate_envelope(time, time_on, time_off, attack_time, attack_interpolation,
     decay_time, decay_interpolation, sustain_level):
@@ -113,7 +113,7 @@ class MIDITrackUsed:
     track_index: int = 0
     name: str = ""
     note_count: int = 0
-    notes_used: List[int] = field(default_factory=list)
+    notes_used: list[int] = field(default_factory=list)
 
 @dataclass
 class MIDITrack:
@@ -134,8 +134,8 @@ class MIDITrack:
     max_note: int = 0
     min_velo: int = 127
     max_velo: int = 0
-    notes: List[MIDINote] = field(default_factory=list)
-    notes_used: List[int] = field(default_factory=list)
+    notes: list[MIDINote] = field(default_factory=list)
+    notes_used: list[int] = field(default_factory=list)
 
     def evaluate(self, time, channel, note_number,
         attack_time, attack_interpolation, decay_time, decay_interpolation, sustain_level,
@@ -665,23 +665,23 @@ def parse_events(memory_map):
     return events
 
 def parse_track_header(memory_map):
-    identifier = memory_map.read(4).decode('latin-1')
+    memory_map.read(4).decode('latin-1')
     chunk_length = struct.unpack(">I", memory_map.read(4))[0]
     return chunk_length
 
 @dataclass
 class MidiTrack:
-    events: List
+    events: list
 
     @classmethod
     def from_memory_map(cls, memory_map):
-        chunk_length = parse_track_header(memory_map)
+        parse_track_header(memory_map)
         events = parse_events(memory_map)
         return cls(events)
 
 def parse_header(memory_map):
-    identifier = memory_map.read(4).decode('latin-1')
-    chunk_length = struct.unpack(">I", memory_map.read(4))[0]
+    memory_map.read(4).decode('latin-1')
+    struct.unpack(">I", memory_map.read(4))[0]
     midi_format = struct.unpack(">H", memory_map.read(2))[0]
     tracks_count = struct.unpack(">H", memory_map.read(2))[0]
     ppqn = struct.unpack(">H", memory_map.read(2))[0]
@@ -695,7 +695,7 @@ class MIDIFile:
     midi_format: int
     ppqn: int
     tempo: int
-    tracks: List[MidiTrack]
+    tracks: list[MidiTrack]
 
     @classmethod
     def from_file(cls, file_path):
@@ -763,7 +763,7 @@ class TrackState:
     def __init__(self):
         self.time_in_ticks = 0
         self.time_in_seconds = 0
-        self.note_on_table = dict()
+        self.note_on_table = {}
 
     def update_time(self, track_index, tempo_map, delta_time):
         self.time_in_ticks += delta_time

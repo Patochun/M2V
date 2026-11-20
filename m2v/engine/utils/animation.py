@@ -1,11 +1,14 @@
 """
 Module for handling animation of Blender objects based on MIDI events.
 """
-from math import ceil, sin, pi
+from math import ceil, pi, sin
 from random import randint
-import bpy # type: ignore  # pylint: disable=import-error
+
+import bpy  # type: ignore  # pylint: disable=import-error
+
 from ..globals import glb
 from ..utils.stuff import w_log
+
 
 def calculate_event_len_move(fps, note):
     """

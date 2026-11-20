@@ -1,11 +1,16 @@
 """
 Module for bar graph animation
 """
-from ..globals import glb, BlenderObjectTypes
-from ..utils.collection import create_collection
-from ..utils.object import create_blender_object, create_duplicate_linked_object, get_object_by_name
+from ..globals import BlenderObjectTypes, glb
 from ..utils.animation import note_animate
-from ..utils.stuff import w_log, parse_range_from_tracks, color_from_note_number
+from ..utils.collection import create_collection
+from ..utils.object import (
+    create_blender_object,
+    create_duplicate_linked_object,
+    get_object_by_name,
+)
+from ..utils.stuff import color_from_note_number, parse_range_from_tracks, w_log
+
 
 def create_blender_bg_animation(track_mask, type_anim):
     """

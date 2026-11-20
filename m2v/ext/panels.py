@@ -1,62 +1,66 @@
-"""
-Main panel for M2V (MIDI to Visuals) addon implementation.
-This class creates and manages the main panel interface for the MIDI to Visuals (M2V) addon extension in Blender.
-"""
-import os
-import bpy  # type: ignore  # pylint: disable=import-error
-from bpy_extras.io_utils import ImportHelper # type: ignore  # pylint: disable=import-error
+"""Main panel for M2V (MIDI to Visuals) addon implementation.
 
-# Define animation style from animation type
-animation_styles = {
-    'barGraph': [
-        ('ZSCALE', "Z-Scale", "Scale on Z axis"),
-        ('B2R_LIGHT', "Blue to Red Light", "Color gradient from blue to red"),
-        ('MULTILIGHT', "Multi light", "Light colors are same as base colors"),
+This class creates and manages the main panel interface for the MIDI to Visuals
+(M2V) addon extension in Blender.
+"""
+
+import os
+from typing import ClassVar
+
+import bpy  # type: ignore  # pylint: disable=import-error
+from bpy_extras.io_utils import ImportHelper  # type: ignore  # pylint: disable=import-error
+
+ANIMATION_STYLES = {
+    "barGraph": [
+        ("ZSCALE", "Z-Scale", "Scale on Z axis"),
+        ("B2R_LIGHT", "Blue to Red Light", "Color gradient from blue to red"),
+        ("MULTILIGHT", "Multi light", "Light colors are same as base colors"),
     ],
-    'stripNotes': [
-        ('ZSCALE', "Z-Scale", "Scale on Z axis"),
-        ('B2R_LIGHT', "Blue to Red Light", "Color gradient from blue to red"),
-        ('MULTILIGHT', "Multi light", "Light colors are same as base colors"),
+    "stripNotes": [
+        ("ZSCALE", "Z-Scale", "Scale on Z axis"),
+        ("B2R_LIGHT", "Blue to Red Light", "Color gradient from blue to red"),
+        ("MULTILIGHT", "Multi light", "Light colors are same as base colors"),
     ],
-    'waterFall': [
-        ('ZSCALE', "Z-Scale", "Scale on Z axis"),
-        ('B2R_LIGHT', "Blue to Red Light", "Color gradient from blue to red"),
-        ('MULTILIGHT', "Multi light", "Light colors are same as base colors"),
+    "waterFall": [
+        ("ZSCALE", "Z-Scale", "Scale on Z axis"),
+        ("B2R_LIGHT", "Blue to Red Light", "Color gradient from blue to red"),
+        ("MULTILIGHT", "Multi light", "Light colors are same as base colors"),
     ],
-    'lightShow': [
-        ('EEVEE', "EEVEE rendering", "For EEVEE rendering"),
-        ('CYCLE', "Cycle rendering", "For CYCLES rendering"),
+    "lightShow": [
+        ("EEVEE", "EEVEE rendering", "For EEVEE rendering"),
+        ("CYCLE", "Cycle rendering", "For CYCLES rendering"),
     ],
-    'fountain': [
-        ('FOUNTAIN', "fountain mode", "fountain mode"),
+    "fountain": [
+        ("FOUNTAIN", "fountain mode", "fountain mode"),
     ],
-    'fireworksV1': [
-        ('SPREAD', "spread mode", "spread mode"),
+    "fireworksV1": [
+        ("SPREAD", "spread mode", "spread mode"),
     ],
-    'fireworksV2': [
-        ('SPREAD', "spread mode", "spread mode"),
+    "fireworksV2": [
+        ("SPREAD", "spread mode", "spread mode"),
     ],
-    # Add other animation types and their styles here
 }
+
 
 def get_animation_styles(self, context):
     """Return the list of styles based on the current animation type."""
     m2b = context.scene.m2b
     current_type = m2b.animation_type
-    return animation_styles.get(current_type, [])
+    return ANIMATION_STYLES.get(current_type, [])
+
 
 def update_animation_style(self, context):
-    """Callback to update animation style from type"""
+    """Callback to update animation style from type."""
     m2b = context.scene.m2b
     current_type = m2b.animation_type
-    styles = animation_styles.get(current_type, [])
+    styles = ANIMATION_STYLES.get(current_type, [])
 
-    # Reset animation style if not in the list of styles
     if m2b.animation_style not in [style[0] for style in styles]:
         m2b.animation_style = styles[0][0] if styles else ""
 
+
 def update_midi_file(self, context):
-    """Callback to update midi file"""
+    """Callback to update midi file."""
     m2b = context.scene.m2b
     current_midi_file = m2b.midi_file
     name_without_ext = os.path.splitext(current_midi_file)[0]
@@ -66,79 +70,80 @@ def update_midi_file(self, context):
     else:
         m2b.audio_file = ""
 
+
 class M2V_Properties(bpy.types.PropertyGroup):
-    """Properties for M2V add-on"""
+    """Properties for M2V add-on."""
 
     midi_file: bpy.props.StringProperty(
         name="MIDI File",
         description="Path to MIDI file",
         default="",
-        subtype='FILE_PATH',
-        update=update_midi_file
+        subtype="FILE_PATH",
+        update=update_midi_file,
     )
 
     audio_file: bpy.props.StringProperty(
         name="Audio File",
         description="Path to audio file for synchronization",
         default="",
-        subtype='FILE_PATH'
+        subtype="FILE_PATH",
     )
 
     animation_type: bpy.props.EnumProperty(
         name="Type",
         description="Type of animation to generate",
         items=[
-            ('barGraph', "Bar Graph", "Bar graph visualization"),
-            ('stripNotes', "Strip Notes", "Strip notes visualization"),
-            ('waterFall', "Waterfall", "Waterfall visualization"),
-            ('fireworksV1', "Fireworks V1", "Fireworks version 1"),
-            ('fireworksV2', "Fireworks V2", "Fireworks version 2"),
-            ('fountain', "Fountain", "Fountain visualization"),
-            ('lightShow', "Light Show", "Light show visualization")
+            ("barGraph", "Bar Graph", "Bar graph visualization"),
+            ("stripNotes", "Strip Notes", "Strip notes visualization"),
+            ("waterFall", "Waterfall", "Waterfall visualization"),
+            ("fireworksV1", "Fireworks V1", "Fireworks version 1"),
+            ("fireworksV2", "Fireworks V2", "Fireworks version 2"),
+            ("fountain", "Fountain", "Fountain visualization"),
+            ("lightShow", "Light Show", "Light show visualization"),
         ],
-        default='barGraph',
-        update=update_animation_style
+        default="barGraph",
+        update=update_animation_style,
     )
 
     animation_style: bpy.props.EnumProperty(
-        items=get_animation_styles,  # Use the function to get items
-        name="Style",
-        description="Style/preset for the generated animation"
+        items=get_animation_styles, name="Style", description="Animation style"
     )
 
     track_mask: bpy.props.StringProperty(
         name="Track Selection",
-        description="Track selection pattern (e.g. '0-5,7,9-12' or '*' for all)",
-        default="*"
+        description="Track selection pattern (e.g. '0-5,7,9-12' or '*')",
+        default="*",
     )
+
 
 class OT_OpenMidiFile(bpy.types.Operator, ImportHelper):
-    """Operator Type = Open MIDI File"""
+    """Open MIDI File operator."""
+
     bl_idname = "wm.open_midi_file"
     bl_label = "Open MIDI File"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options: ClassVar = {"REGISTER", "UNDO"}
 
-    filter_glob: bpy.props.StringProperty(
-        default="*.mid",
-        options={'HIDDEN'}
-    )
+    filter_glob: bpy.props.StringProperty(default="*.mid", options={"HIDDEN"})
 
     def execute(self, context):
+        """Execute the open file dialog."""
         m2b = context.scene.m2b
         m2b.midi_file = self.filepath
-        return {'FINISHED'}
+        return {"FINISHED"}
+
 
 class M2V_PT_MainPanel(bpy.types.Panel):
+    """Main panel for M2V (MIDI to Blender) addon.
+
+    This panel provides the main interface for the MIDI to Blender animation
+    generator. Located in the 3D View's sidebar under the 'M2V' category.
     """
-    Panel Type = Main panel for M2V (MIDI to Blender) addon.
-    This panel provides the main interface for the MIDI to Blender animation generator.
-    Located in the 3D View's sidebar under the 'M2B' category.
-    """
+
     bl_label = "M2V - MIDI to Visuals"
     bl_idname = "M2V_PT_MainPanel"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'UI'
-    bl_category = 'M2V'
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "M2V"
 
     def draw(self, context):
         """Draw the main M2V panel layout in Blender."""
