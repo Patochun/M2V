@@ -23,13 +23,13 @@ def create_custom_attributes(obj):
     Custom Properties Added:
         base_color (float): 0.0-1.0
             Controls base color selection in material color ramp
-            
+
         emission_color (float): 0.0-1.0
             Controls emission color selection in material color ramp
-            
+
         emission_strength (float): 0.0-50.0
             Controls emission intensity with soft limits
-            
+
         alpha (float): 0.0-1.0
             Controls object transparency
 
@@ -88,6 +88,7 @@ def create_blender_object(
     object_type: BlenderObjectTypes,
     collection,
     name: str,
+    *,
     material=None,
     location: tuple=(0,0,0),
     scale: tuple=(1,1,1),
@@ -124,7 +125,9 @@ def create_blender_object(
             temp_mesh = temp_obj.data
 
             bpy.ops.object.mode_set(mode='EDIT')
-            bm = bmesh.from_edit_mesh(temp_mesh)
+            bm = bmesh.from_edit_mesh(  # pylint: disable=assignment-from-no-return
+                temp_mesh
+            )
 
             original_vertices = list(bm.verts)
 

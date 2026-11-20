@@ -32,7 +32,9 @@ def register():
     """
     for cls in classes:
         bpy.utils.register_class(cls)
-    bpy.types.Scene.m2b = bpy.props.PointerProperty(type=M2V_Properties)
+    bpy.types.Scene.m2b = bpy.props.PointerProperty(  # pylint: disable=assignment-from-no-return
+        type=M2V_Properties
+    )
 
 def unregister():
     """

@@ -5,6 +5,7 @@ instead of using global variables.
 """
 
 from contextlib import contextmanager
+from contextvars import ContextVar
 from typing import Any
 
 
@@ -22,8 +23,9 @@ class AnimationContext:
         self.f_log: Any = None
 
 
-# Thread-local storage for context (for Blender's execution model)
-_current_context: AnimationContext | None = None
+_current_context: ContextVar[AnimationContext | None] = ContextVar(
+    "m2v_animation_context", default=None
+)
 
 
 def get_animation_context() -> AnimationContext:
@@ -32,11 +34,12 @@ def get_animation_context() -> AnimationContext:
     Raises:
         RuntimeError: If context not initialized with with_animation_context()
     """
-    if _current_context is None:
+    ctx = _current_context.get()
+    if ctx is None:
         raise RuntimeError(
             "Animation context not initialized. Use with_animation_context() first."
         )
-    return _current_context
+    return ctx
 
 
 def set_animation_context(ctx: AnimationContext) -> None:
@@ -45,8 +48,7 @@ def set_animation_context(ctx: AnimationContext) -> None:
     Args:
         ctx: AnimationContext instance to use
     """
-    global _current_context
-    _current_context = ctx
+    _current_context.set(ctx)
 
 
 @contextmanager
@@ -61,11 +63,8 @@ def with_animation_context():
     Yields:
         AnimationContext: The current animation context
     """
-    global _current_context
-    old_context = _current_context
-    _current_context = AnimationContext()
+    token = _current_context.set(AnimationContext())
     try:
-        yield _current_context
+        yield get_animation_context()
     finally:
-        _current_context = old_context
-
+        _current_context.reset(token)

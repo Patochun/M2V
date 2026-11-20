@@ -2,7 +2,7 @@
 
 import bpy  # type: ignore  # pylint: disable=import-error
 
-from ..context import AnimationContext
+from ..context import AnimationContext, get_animation_context
 
 
 def delete_collection_recursive(collection: bpy.types.Collection) -> None:
@@ -37,15 +37,20 @@ def find_collection(context, item: bpy.types.ID) -> bpy.types.Collection:
 
 
 def move_to_collection(
-    collection: bpy.types.Collection, obj: bpy.types.Object, ctx: AnimationContext
+    collection: bpy.types.Collection,
+    obj: bpy.types.Object,
+    ctx: AnimationContext | None = None,
 ) -> None:
     """Move an object to a new collection.
 
     Args:
         collection: Target collection
         obj: Object to move
-        ctx: Animation context
+        ctx: Animation context (uses the active context when omitted)
     """
+    if ctx is None:
+        ctx = get_animation_context()
+
     collect_to_unlink = find_collection(bpy.context, obj)
     collection.objects.link(obj)
     collect_to_unlink.objects.unlink(obj)
@@ -82,7 +87,7 @@ def create_collection(
 
     if empty_loc_master:
         if ctx is None:
-            raise ValueError("ctx is required when empty_loc_master=True")
+            ctx = get_animation_context()
         bpy.ops.object.empty_add(type="PLAIN_AXES", location=(0, 0, 0))
         empty = bpy.context.active_object
         empty.name = f"{col_name}_MasterLocation"

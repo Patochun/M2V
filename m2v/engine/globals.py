@@ -55,4 +55,3 @@ class _GlobalStateProxy:
 
 # Backward compatibility: expose as module-level global
 glb = _GlobalStateProxy()
-

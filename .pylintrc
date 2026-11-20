@@ -26,3 +26,4 @@ max-args=8
 max-locals=20
 max-statements=100
 max-branches=15
+max-positional-arguments=12

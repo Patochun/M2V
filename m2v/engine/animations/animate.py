@@ -20,7 +20,7 @@ def animate(animation, track_mask, animation_type):
             - "stripNotes": Creates strip notes animation
             - "waterFall": Creates waterfall animation
             - "fireworksV1": Creates fireworks version 1 animation
-            - "fireworksV2": Creates fireworks version 2 animation 
+            - "fireworksV2": Creates fireworks version 2 animation
             - "fountain": Creates fountain animation
             - "lightShow": Creates light show animation
         track_mask: The track mask to apply to the animation

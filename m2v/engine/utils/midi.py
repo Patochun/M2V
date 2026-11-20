@@ -6,7 +6,7 @@ MIDI module imported from https://github.com/JacquesLucke/animation_nodes
 This part are written by Omar Emara and licensed under the GPLv3 license.
 I was the initiator and participated in the implementation of the MIDI module in Animation Nodes
 Additions:
-    added noteMin & noteMax in track object 
+    added noteMin & noteMax in track object
     added notes_used in track object
     added track, only if it contains notes in tracks
     added trackIndexUsed vs trackIndex
@@ -148,7 +148,7 @@ class MIDITrack:
             note_number (int): MIDI note number
             attack_time (float): Duration of attack phase in seconds
             attack_interpolation (float): Interpolation curve for attack phase
-            decay_time (float): Duration of decay phase in seconds 
+            decay_time (float): Duration of decay phase in seconds
             decay_interpolation (float): Interpolation curve for decay phase
             sustain_level (float): Amplitude level during sustain phase (0.0 to 1.0)
             release_time (float): Duration of release phase in seconds
@@ -158,12 +158,14 @@ class MIDITrack:
             float: Envelope amplitude value at the given time point (0.0 to 1.0).
                   Returns 0.0 if no matching notes are found.
         Notes:
-            The function filters notes by channel and note number, then evaluates the ADSR 
-            envelope for all matching notes that are active at the given time point. 
+            The function filters notes by channel and note number, then evaluates the ADSR
+            envelope for all matching notes that are active at the given time point.
             Returns the maximum envelope value among all matching notes.
         """
-        note_filter = lambda note: note.channel == channel and note.note_number == note_number
-        time_filter = lambda note: note.time_off + release_time >= time >= note.time_on
+        def note_filter(note):
+            return note.channel == channel and note.note_number == note_number
+        def time_filter(note):
+            return note.time_off + release_time >= time >= note.time_on
         filtered_notes = filter(lambda note: note_filter(note) and time_filter(note), self.notes)
         arguments = (time, attack_time, attack_interpolation, decay_time, decay_interpolation,
             sustain_level, release_time, release_interpolation, velocity_sensitivity)
@@ -195,8 +197,10 @@ class MIDITrack:
             list[float]: A list of 128 envelope values (0-1), one for each MIDI note number,
                          where each value represents the current amplitude of that note
         """
-        channel_filter = lambda note: note.channel == channel
-        time_filter = lambda note: note.time_off + release_time >= time >= note.time_on
+        def channel_filter(note):
+            return note.channel == channel
+        def time_filter(note):
+            return note.time_off + release_time >= time >= note.time_on
         filtered_notes = list(filter(lambda note: channel_filter(note)
                          and time_filter(note), self.notes))
         arguments = (time, attack_time, attack_interpolation, decay_time, decay_interpolation,
@@ -291,6 +295,8 @@ class NoteOffEvent:
 
 @dataclass
 class NotePressureEvent:
+    """MIDI event reporting pressure applied to a note."""
+
     delta_time: int
     channel: int
     note: int
@@ -298,12 +304,15 @@ class NotePressureEvent:
 
     @classmethod
     def from_memory_map(cls, delta_time, channel, memory_map):
+        """Parse a note-pressure event from its payload."""
         note = struct.unpack("B", memory_map.read(1))[0]
         pressure = struct.unpack("B", memory_map.read(1))[0]
         return cls(delta_time, channel, note, pressure)
 
 @dataclass
 class ControllerEvent:
+    """MIDI event reporting a controller value."""
+
     delta_time: int
     channel: int
     controller: int
@@ -311,34 +320,43 @@ class ControllerEvent:
 
     @classmethod
     def from_memory_map(cls, delta_time, channel, memory_map):
+        """Parse a controller event from its payload."""
         controller = struct.unpack("B", memory_map.read(1))[0]
         value = struct.unpack("B", memory_map.read(1))[0]
         return cls(delta_time, channel, controller, value)
 
 @dataclass
 class ProgramEvent:
+    """MIDI event selecting an instrument program."""
+
     delta_time: int
     channel: int
     program: int
 
     @classmethod
     def from_memory_map(cls, delta_time, channel, memory_map):
+        """Parse a program event from its payload."""
         program = struct.unpack("B", memory_map.read(1))[0]
         return cls(delta_time, channel, program)
 
 @dataclass
 class ChannelPressureEvent:
+    """MIDI event reporting channel-wide pressure."""
+
     delta_time: int
     channel: int
     pressure: int
 
     @classmethod
     def from_memory_map(cls, delta_time, channel, memory_map):
+        """Parse a channel-pressure event from its payload."""
         pressure = struct.unpack("B", memory_map.read(1))[0]
         return cls(delta_time, channel, pressure)
 
 @dataclass
 class PitchBendEvent:
+    """MIDI event reporting a pitch-bend value."""
+
     delta_time: int
     channel: int
     lsb: int
@@ -346,6 +364,7 @@ class PitchBendEvent:
 
     @classmethod
     def from_memory_map(cls, delta_time, channel, memory_map):
+        """Parse a pitch-bend event from its payload."""
         lsb = struct.unpack("B", memory_map.read(1))[0]
         msb = struct.unpack("B", memory_map.read(1))[0]
         return cls(delta_time, channel, lsb, msb)
@@ -353,144 +372,188 @@ class PitchBendEvent:
 # Only track events
 @dataclass
 class SequenceNumberEvent:
+    """MIDI meta event identifying a sequence."""
+
     delta_time: int
     sequence_number: int
 
     @classmethod
-    def from_memory_map(cls, delta_time, length, memory_map):
+    def from_memory_map(cls, delta_time, _length, memory_map):
+        """Parse a sequence-number meta event."""
         sequence_number = struct.unpack(">H", memory_map.read(2))[0]
         return cls(delta_time, sequence_number)
 
 @dataclass
 class TextEvent:
+    """MIDI meta event containing arbitrary text."""
+
     delta_time: int
     text: str
 
     @classmethod
     def from_memory_map(cls, delta_time, length, memory_map):
+        """Parse a text meta event."""
         text = struct.unpack(f"{length}s", memory_map.read(length))[0].decode("latin-1")
         return cls(delta_time, text)
 
 @dataclass
 class CopyrightEvent:
+    """MIDI meta event containing copyright text."""
+
     delta_time: int
     copyright: str
 
     @classmethod
     def from_memory_map(cls, delta_time, length, memory_map):
+        """Parse a copyright meta event."""
         copyright = struct.unpack(f"{length}s", memory_map.read(length))[0].decode("latin-1")
         return cls(delta_time, copyright)
 
 @dataclass
 class TrackNameEvent:
+    """MIDI meta event containing a track name."""
+
     delta_time: int
     name: str
 
     @classmethod
     def from_memory_map(cls, delta_time, length, memory_map):
+        """Parse a track-name meta event."""
         name = struct.unpack(f"{length}s", memory_map.read(length))[0].decode("latin-1")
         return cls(delta_time, name)
 
 @dataclass
 class InstrumentNameEvent:
+    """MIDI meta event containing an instrument name."""
+
     delta_time: int
     name: str
 
     @classmethod
     def from_memory_map(cls, delta_time, length, memory_map):
+        """Parse an instrument-name meta event."""
         name = struct.unpack(f"{length}s", memory_map.read(length))[0].decode("latin-1")
         return cls(delta_time, name)
 
 @dataclass
 class LyricEvent:
+    """MIDI meta event containing lyric text."""
+
     delta_time: int
     lyric: str
 
     @classmethod
     def from_memory_map(cls, delta_time, length, memory_map):
+        """Parse a lyric meta event."""
         lyric = struct.unpack(f"{length}s", memory_map.read(length))[0].decode("latin-1")
         return cls(delta_time, lyric)
 
 @dataclass
 class MarkerEvent:
+    """MIDI meta event containing a marker."""
+
     delta_time: int
     marker: str
 
     @classmethod
     def from_memory_map(cls, delta_time, length, memory_map):
+        """Parse a marker meta event."""
         marker = struct.unpack(f"{length}s", memory_map.read(length))[0].decode("latin-1")
         return cls(delta_time, marker)
 
 @dataclass
 class CuePointEvent:
+    """MIDI meta event containing a cue point."""
+
     delta_time: int
     cue_point: str
 
     @classmethod
     def from_memory_map(cls, delta_time, length, memory_map):
+        """Parse a cue-point meta event."""
         cue_point = struct.unpack(f"{length}s", memory_map.read(length))[0].decode("latin-1")
         return cls(delta_time, cue_point)
 
 @dataclass
 class ProgramNameEvent:
+    """MIDI meta event containing a program name."""
+
     delta_time: int
     name: str
 
     @classmethod
     def from_memory_map(cls, delta_time, length, memory_map):
+        """Parse a program-name meta event."""
         name = struct.unpack(f"{length}s", memory_map.read(length))[0].decode("latin-1")
         return cls(delta_time, name)
 
 @dataclass
 class DeviceNameEvent:
+    """MIDI meta event containing a device name."""
+
     delta_time: int
     name: str
 
     @classmethod
     def from_memory_map(cls, delta_time, length, memory_map):
+        """Parse a device-name meta event."""
         name = struct.unpack(f"{length}s", memory_map.read(length))[0].decode("latin-1")
         return cls(delta_time, name)
 
 @dataclass
 class MidiChannelPrefixEvent:
+    """MIDI meta event assigning a channel prefix to a track."""
+
     delta_time: int
     prefix: int
 
     @classmethod
-    def from_memory_map(cls, delta_time, length, memory_map):
+    def from_memory_map(cls, delta_time, _length, memory_map):
+        """Parse a MIDI channel-prefix meta event."""
         prefix = struct.unpack("B", memory_map.read(1))[0]
         return cls(delta_time, prefix)
 
 @dataclass
 class MidiPortEvent:
+    """MIDI meta event specifying a port."""
+
     delta_time: int
     port: int
 
     @classmethod
-    def from_memory_map(cls, delta_time, length, memory_map):
+    def from_memory_map(cls, delta_time, _length, memory_map):
+        """Parse a MIDI port meta event."""
         port = struct.unpack("B", memory_map.read(1))[0]
         return cls(delta_time, port)
 
 @dataclass
 class EndOfTrackEvent:
+    """MIDI meta event marking the end of a track."""
+
     delta_time: int
 
     @classmethod
-    def from_memory_map(cls, delta_time, length, memory_map):
+    def from_memory_map(cls, delta_time, _length, _memory_map):
+        """Create an end-of-track event."""
         return cls(delta_time)
 
 @dataclass
 class TempoEvent:
+    """MIDI meta event specifying the tempo in microseconds per quarter note."""
+
     delta_time: int
     tempo: int
 
     @classmethod
-    def from_memory_map(cls, delta_time, length, memory_map):
+    def from_memory_map(cls, delta_time, _length, memory_map):
+        """Parse a tempo meta event."""
         tempo = struct.unpack(">I", b"\x00" + memory_map.read(3))[0]
         return cls(delta_time, tempo)
 
 @dataclass
 class SmpteOffsetEvent:
+    """MIDI meta event specifying an SMPTE time offset."""
+
     delta_time: int
     hours: int
     minutes: int
@@ -499,7 +562,8 @@ class SmpteOffsetEvent:
     fractional_frames: int
 
     @classmethod
-    def from_memory_map(cls, delta_time, length, memory_map):
+    def from_memory_map(cls, delta_time, _length, memory_map):
+        """Parse an SMPTE offset meta event."""
         hours = struct.unpack("B", memory_map.read(1))[0]
         minutes = struct.unpack("B", memory_map.read(1))[0]
         seconds = struct.unpack("B", memory_map.read(1))[0]
@@ -509,6 +573,8 @@ class SmpteOffsetEvent:
 
 @dataclass
 class TimeSignatureEvent:
+    """MIDI meta event specifying a time signature."""
+
     delta_time: int
     numerator: int
     denominator: int
@@ -516,7 +582,8 @@ class TimeSignatureEvent:
     thirty_second_per_24_clocks: int
 
     @classmethod
-    def from_memory_map(cls, delta_time, length, memory_map):
+    def from_memory_map(cls, delta_time, _length, memory_map):
+        """Parse a time-signature meta event."""
         numerator = struct.unpack("B", memory_map.read(1))[0]
         denominator = struct.unpack("B", memory_map.read(1))[0]
         clocks_per_click = struct.unpack("B", memory_map.read(1))[0]
@@ -526,43 +593,55 @@ class TimeSignatureEvent:
 
 @dataclass
 class KeySignatureEvent:
+    """MIDI meta event specifying a key signature."""
+
     delta_time: int
     flats_sharps: int
     major_minor: int
 
     @classmethod
-    def from_memory_map(cls, delta_time, length, memory_map):
+    def from_memory_map(cls, delta_time, _length, memory_map):
+        """Parse a key-signature meta event."""
         flats_sharps = struct.unpack("B", memory_map.read(1))[0]
         major_minor = struct.unpack("B", memory_map.read(1))[0]
         return cls(delta_time, flats_sharps, major_minor)
 
 @dataclass
 class SequencerEvent:
+    """MIDI meta event containing sequencer-specific data."""
+
     delta_time: int
     data: bytes
 
     @classmethod
     def from_memory_map(cls, delta_time, length, memory_map):
+        """Parse a sequencer-specific meta event."""
         data = struct.unpack(f"{length}s", memory_map.read(length))[0]
         return cls(delta_time, data)
 
 @dataclass
 class SysExEvent:
+    """MIDI system-exclusive event."""
+
     delta_time: int
     data: bytes
 
     @classmethod
     def from_memory_map(cls, delta_time, length, memory_map):
+        """Parse a system-exclusive event payload."""
         data = struct.unpack(f"{length}s", memory_map.read(length))[0]
         return cls(delta_time, data)
 
 @dataclass
 class EscapeSequenceEvent:
+    """MIDI escape-sequence event."""
+
     delta_time: int
     data: bytes
 
     @classmethod
     def from_memory_map(cls, delta_time, length, memory_map):
+        """Parse an escape-sequence event payload."""
         data = struct.unpack(f"{length}s", memory_map.read(length))[0]
         return cls(delta_time, data)
 
@@ -607,14 +686,17 @@ channel_event_by_status = {
 }
 
 def unpack_vlq(memory_map):
+    """Read and decode one variable-length quantity from the MIDI stream."""
     total = 0
     while True:
         char = struct.unpack("B", memory_map.read(1))[0]
         total = (total << 7) + (char & 0x7F)
-        if not char & 0x80: break
+        if not char & 0x80:
+            break
     return total
 
 def parse_channel_event(delta_time, status, memory_map):
+    """Parse a channel event using its status byte and payload."""
     channel = status & 0xF
     event_class = channel_event_by_status[status & 0xF0]
     event = event_class.from_memory_map(delta_time, channel, memory_map)
@@ -623,6 +705,7 @@ def parse_channel_event(delta_time, status, memory_map):
     return event
 
 def parse_meta_event(delta_time, memory_map):
+    """Parse a MIDI meta event and its variable-length payload."""
     event_type = struct.unpack("B", memory_map.read(1))[0]
     length = unpack_vlq(memory_map)
     event_class = meta_event_by_type[event_type]
@@ -630,6 +713,7 @@ def parse_meta_event(delta_time, memory_map):
     return event
 
 def parse_sys_ex_event(delta_time, status, memory_map):
+    """Parse a system-exclusive or escape-sequence event."""
     length = unpack_vlq(memory_map)
     if status == 0xF0:
         return SysExEvent.from_memory_map(delta_time, length, memory_map)
@@ -637,11 +721,14 @@ def parse_sys_ex_event(delta_time, status, memory_map):
         return EscapeSequenceEvent.from_memory_map(delta_time, length, memory_map)
 
 def parse_event(memory_map, parse_state):
+    """Parse one MIDI event, honoring the stream's running status."""
     delta_time = unpack_vlq(memory_map)
     status = struct.unpack("B", memory_map.read(1))[0]
 
-    if status & 0x80: parse_state.runningStatus = status
-    else: memory_map.seek(-1, SEEK_CUR)
+    if status & 0x80:
+        parse_state.runningStatus = status
+    else:
+        memory_map.seek(-1, SEEK_CUR)
 
     running_status = parse_state.runningStatus
     if running_status == 0xFF:
@@ -653,45 +740,57 @@ def parse_event(memory_map, parse_state):
 
 @dataclass
 class MidiParseState:
+    """Parser state needed to decode MIDI running status."""
+
     running_status: int = 0
 
 def parse_events(memory_map):
+    """Read events from a track through its end-of-track marker."""
     events = []
     parse_state = MidiParseState()
     while True:
         event = parse_event(memory_map, parse_state)
         events.append(event)
-        if isinstance(event, EndOfTrackEvent): break
+        if isinstance(event, EndOfTrackEvent):
+            break
     return events
 
 def parse_track_header(memory_map):
+    """Read a track chunk header and return its declared byte length."""
     memory_map.read(4).decode('latin-1')
     chunk_length = struct.unpack(">I", memory_map.read(4))[0]
     return chunk_length
 
 @dataclass
 class MidiTrack:
+    """A parsed MIDI track containing an ordered sequence of events."""
+
     events: list
 
     @classmethod
     def from_memory_map(cls, memory_map):
+        """Parse one track chunk from the MIDI stream."""
         parse_track_header(memory_map)
         events = parse_events(memory_map)
         return cls(events)
 
 def parse_header(memory_map):
+    """Parse the MIDI file header and return format, track count, and PPQN."""
     memory_map.read(4).decode('latin-1')
-    struct.unpack(">I", memory_map.read(4))[0]
+    _ = struct.unpack(">I", memory_map.read(4))[0]
     midi_format = struct.unpack(">H", memory_map.read(2))[0]
     tracks_count = struct.unpack(">H", memory_map.read(2))[0]
     ppqn = struct.unpack(">H", memory_map.read(2))[0]
     return midi_format, tracks_count, ppqn
 
 def parse_tracks(memory_map, tracks_count):
+    """Parse the declared number of MIDI track chunks."""
     return [MidiTrack.from_memory_map(memory_map) for i in range(tracks_count)]
 
 @dataclass
 class MIDIFile:
+    """Parsed MIDI file metadata and track data."""
+
     midi_format: int
     ppqn: int
     tempo: int
@@ -699,6 +798,7 @@ class MIDIFile:
 
     @classmethod
     def from_file(cls, file_path):
+        """Read a MIDI file from disk and parse its header and tracks."""
         with open(file_path, "rb") as f:
             memory_map = mmap.mmap(f.fileno(), 0, access = mmap.ACCESS_READ)
             midi_format, tracks_count, ppqn = parse_header(memory_map)
@@ -709,19 +809,25 @@ class MIDIFile:
 
 @dataclass
 class TempoEventRecord:
+    """Tempo change with its corresponding tick and elapsed-time positions."""
+
     time_in_ticks: int
     time_in_seconds: int
     tempo: int
 
 class TempoMap:
+    """Convert MIDI tick positions to elapsed seconds using tempo events."""
+
     def __init__(self, midi_file):
         self.ppqn = midi_file.ppqn
         self.midi_format = midi_file.midi_format
         self.compute_tempo_tracks(midi_file)
 
     def compute_tempo_tracks(self, midi_file):
+        """Collect tempo changes and their elapsed times for each track."""
         tracks = midi_file.tracks
-        if midi_file.midi_format == 1: tracks = tracks[0:1]
+        if midi_file.midi_format == 1:
+            tracks = tracks[0:1]
         self.tempo_tracks = [[] * len(tracks)]
         for track_index, track in enumerate(tracks):
             time_in_ticks = 0
@@ -730,13 +836,16 @@ class TempoMap:
             for event in track.events:
                 time_in_ticks += event.delta_time
                 time_in_seconds = self.time_in_ticks_to_seconds(track_index, time_in_ticks)
-                if not isinstance(event, TempoEvent): continue
+                if not isinstance(event, TempoEvent):
+                    continue
                 tempo_events.append(TempoEventRecord(time_in_ticks, time_in_seconds, event.tempo))
 
     def time_in_ticks_to_seconds(self, track_index, time_in_ticks):
+        """Convert a track's tick position to seconds."""
         track_index = track_index if self.midi_format != 1 else 0
         tempo_events = self.tempo_tracks[track_index]
-        match_function = lambda event: event.time_in_ticks <= time_in_ticks
+        def match_function(event):
+            return event.time_in_ticks <= time_in_ticks
         matched_events = filter(match_function, reversed(tempo_events))
         tempo_event = next(matched_events, TempoEventRecord(0, 0, 500_000))
         microseconds_per_tick = tempo_event.tempo / self.ppqn
@@ -754,22 +863,28 @@ class TempoMap:
 
 @dataclass
 class NoteOnRecord:
+    """Record an active note-on event and overlapping-note count."""
+
     ticks: int
     time: float
     velocity: float
     number_of_notes: int = 1
 
 class TrackState:
+    """Track timing and active note-on state while parsing events."""
+
     def __init__(self):
         self.time_in_ticks = 0
         self.time_in_seconds = 0
         self.note_on_table = {}
 
     def update_time(self, track_index, tempo_map, delta_time):
+        """Advance the track clock by an event's delta time."""
         self.time_in_ticks += delta_time
         self.time_in_seconds = tempo_map.time_in_ticks_to_seconds(track_index, self.time_in_ticks)
 
     def record_note_on(self, event):
+        """Record a note-on event, counting repeated active notes."""
         key = (event.channel, event.note)
         if key in self.note_on_table:
             self.note_on_table[key].number_of_notes += 1
@@ -778,6 +893,7 @@ class TrackState:
                                                    event.velocity / 127)
 
     def get_corresponding_note_on_record(self, event):
+        """Match a note-off event to its active note-on record."""
         key = (event.channel, event.note)
         note_on_record = self.note_on_table[key]
         if note_on_record.number_of_notes == 1:
@@ -788,6 +904,7 @@ class TrackState:
             return None
 
 def read_midi_file(path):
+    """Parse a MIDI file into tracks containing timed notes."""
     midi_file = MIDIFile.from_file(path)
     tempo_map = TempoMap(midi_file)
     # set tempo to tempo value if fixe for all midi_file
@@ -823,7 +940,8 @@ def read_midi_file(path):
                     notes_used.append(event.note)
             elif isinstance(event, NoteOffEvent):
                 note_on_record = track_state.get_corresponding_note_on_record(event)
-                if note_on_record is None: continue
+                if note_on_record is None:
+                    continue
                 start_time = note_on_record.time
                 velocity = note_on_record.velocity
                 end_time = track_state.time_in_seconds

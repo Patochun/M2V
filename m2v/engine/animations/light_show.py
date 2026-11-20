@@ -43,7 +43,7 @@ def generate_hsv_colors(n_series):
 def create_light_show(track_mask, type_anim):
     """Creates a light show animation in Blender using spheres and lights.
     This function generates a visual light show animation where spheres
-    with lights represent musical tracks. 
+    with lights represent musical tracks.
     Each sphere has sections that light up based on musical notes,
     creating a synchronized light show effect.
     Args:

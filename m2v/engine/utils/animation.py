@@ -132,7 +132,7 @@ def add_note_status_keyframes(frames, note):
         (frames['t4'], "note_status", 0.0),
     ]
 
-def process_animation_type(animation_type, obj, note, track, frames, color_track):
+def process_animation_type(animation_type, obj, note, track, frames, *, color_track):
     """Process different types of animation based on the provided animation type."""
     brightness = calculate_brightness(note)
     keyframes = []
@@ -166,7 +166,7 @@ def apply_keyframes(obj, keyframes):
 
     Special data_path handling:
         - Vector properties: Use tuple values with optional None to skip components
-        - Custom properties: "note_status", "emission_color", "emission_strength", "base_color" 
+        - Custom properties: "note_status", "emission_color", "emission_strength", "base_color"
         - Modifier properties: Use "modifiers.{modifier_name}.{property_name}" format
 
     Example:
@@ -310,7 +310,7 @@ def note_animate(obj, type_anim, track, note_index, color_track):
     for animation_type in type_anim.split(','):
         keyframes.extend(process_animation_type(
             animation_type, obj, note, track,
-            frames, color_track))
+            frames, color_track=color_track))
 
     keyframes.extend(add_note_status_keyframes(frames, note))
     keyframes.sort(key=lambda x: (x[0], x[1]))
@@ -323,7 +323,7 @@ def distribute_objects_with_clamp_to(list_obj: list, curve: bpy.types.Object):
     Args:
         list_obj (list): List of objects to distribute along the curve
         curve (bpy.types.Object): Target Bezier curve object
-        
+
     The function:
     - Calculates even spacing between objects
     - Adds Clamp To constraint to each object

@@ -14,7 +14,7 @@ from ..utils.object import (
 from ..utils.stuff import parse_range_from_tracks, w_log
 
 
-def create_sp_cloud_gn(name_gn, obj, sparkles_material):
+def create_sp_cloud_gn(name_gn, obj):
     """
     Creates a Geometry Nodes setup for generating sparkles cloud effect
 
@@ -24,7 +24,6 @@ def create_sp_cloud_gn(name_gn, obj, sparkles_material):
     Parameters:
         name_gn (str): Name for the geometry nodes group and modifier
         obj (bpy.types.Object): Blender object to add the modifier to
-        sparkles_material (bpy.types.Material): Material to apply to sparkles
 
     Node Setup:
         - Input icosphere for cloud volume
@@ -195,7 +194,7 @@ def create_fireworks_v1(track_mask, type_anim):
 
     # create sparkles_cloud_gn and set parameters
     # Create sparkles cloud geometry nodes
-    create_sp_cloud_gn("SparklesCloud", fw_sphere, glb.mat_global_custom)
+    create_sp_cloud_gn("SparklesCloud", fw_sphere)
 
     # Get modifier interface identifiers
     mod = fw_sphere.modifiers["SparklesCloud"]

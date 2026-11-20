@@ -9,12 +9,14 @@ from ..context import AnimationContext, get_animation_context
 
 def init_log(log_file: str, ctx: AnimationContext) -> None:
     """Open log file for append."""
-    ctx.f_log = open(log_file, "w+", encoding="utf-8")
+    ctx.f_log = open(  # pylint: disable=consider-using-with
+        log_file, "w+", encoding="utf-8"
+    )
 
 
 def w_log(to_log: str, ctx: AnimationContext | None = None) -> None:
     """Write to screen and log.
-    
+
     Args:
         to_log: Message to log
         ctx: Animation context (optional, uses get_animation_context() if not provided)
