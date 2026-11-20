@@ -77,7 +77,7 @@ class OT_GenerateAnimation(bpy.types.Operator):
                 # Core M2V logic
                 init_log(paths["log"], ctx)
                 init_collections(ctx)
-                init_materials(ctx)
+                init_materials()
                 ctx.fps = scene.render.fps
 
                 load_audio(paths["audio"])
